@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
+use App\Http\Resources\UserInfoResource;
 
 class LoginController extends Controller
 {
@@ -48,6 +49,6 @@ class LoginController extends Controller
 	protected function authenticated(Request $request, $user)
 	{
 		//
-		return response()->json($user);
+		return new UserInfoResource($user);
 	}
 }

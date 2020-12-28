@@ -6,6 +6,7 @@ use App\Providers\RouteServiceProvider;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Resources\UserInfoResource;
 
 class RedirectIfAuthenticated
 {
@@ -24,7 +25,7 @@ class RedirectIfAuthenticated
         foreach ($guards as $guard) {
             if (Auth::guard($guard)->check()) {
 				if($request->wantsJson()){
-					return response()->json($request->user());
+					return new UserInfoResource($request->user());
 				}
                 return redirect(RouteServiceProvider::HOME);
             }

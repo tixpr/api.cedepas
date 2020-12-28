@@ -4,9 +4,10 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Database\QueryException;
 use App\Models\User;
 use App\Models\Role;
+use App\Http\Requests\CreateUserRequest;
+use App\Http\Requests\ImportUsersRequest;
 
 class UsersController extends Controller
 {
@@ -37,23 +38,11 @@ class UsersController extends Controller
 	{
 		$users = null;
 		if(count($ids)>0){
-			$users = User::orderBy('users.id','asc')->whereHas('roles',function ($query) use($ids){
+			$users = User::orderBy('users.id','desc')->whereHas('roles',function ($query) use($ids){
 				return $query->whereIn('role_id',$ids);
 			});
-			if ($request->boolean('enableds')) {
-				$users->where('users.active', true);
-			}
-			if ($request->boolean('disableds')) {
-				$users->where('users.active', false);
-			}
 		}else{
-			$users = User::orderBy('users.id','asc');
-			if ($request->boolean('enableds')) {
-				$users->where('active', true);
-			}
-			if ($request->boolean('disableds')) {
-				$users->where('active', false);
-			}
+			$users = User::orderBy('users.id','desc');
 		}
 		return $users;
 	}
@@ -66,24 +55,62 @@ class UsersController extends Controller
 		if(!empty($request->search)){
 			$s = mb_strtoupper($request->search);
 			if(count($ids)>0){
-				$users->where('users.name', 'LIKE', "%{$s}%");
+				$users->where('users.firstname', 'LIKE', "%{$s}%")->orWhere('users.lastname', 'LIKE', "%{$s}%");
 			}else{
-				$users->where('name', 'LIKE', "%{$s}%");
+				$users->where('firstname', 'LIKE', "%{$s}%")->orWhere('lastname', 'LIKE', "%{$s}%");
 			}
 		}
 		return response()->json($users->paginate(20));
 	}
-	public function postCreateUser(Request $request)
+	public function getTeachers(Request $request)
 	{
-		User::create([
-			'name'=>mb_strtoupper($request->name),
-			'password'=>bcrypt($request->password),
-			'email'=>$request->email,
-			'phone'=>$request->phone
+		$users = User::orderBy('users.id','desc')->whereHas('roles',function ($query){
+			return $query->where('role_id',3);
+		})->get();	
+		return response()->json([
+			'data'=>$users
 		]);
-		return response()->json(['message'=>'Usuario registrado']);
 	}
-	public function postImportUsers(Request $request)
+	public function postUser(CreateUserRequest $request)
+	{
+		$user = new User;
+		$user->firstname =mb_strtoupper($request->firstname);
+		$user->lastname = mb_strtoupper($request->lastname); 
+		$user->password = bcrypt('password');
+		$user->active=true;
+		$user->email=$request->email;
+		$user->cell_phone=$request->phone;
+		$user->save();
+		return response()->json(['data'=>$user]);
+	}
+	public function putUser(Request $request,$user_id)
+	{
+		$user = User::findOrFail($user_id);
+		$user->firstname = mb_strtoupper($request->firstname);
+		$user->lastname = mb_strtoupper($request->lastname);
+		$user->email=$request->email;
+		$user->cell_phone=$request->phone;
+		$user->save();
+		return response()->json([
+			'data'=>$user
+		]);
+	}
+	public function putUserActive(Request $request,$user_id)
+	{
+		$user = User::findOrFail($user_id);
+		$user->active = !$user->active;
+		$user->save();
+		return response()->json([
+			'data'=>$user
+		]);
+	}
+	public function deleteUser(Request $request,$user_id)
+	{
+		$user = User::findOrFail($user_id);
+		$user->delete();
+		return response()->json([]);
+	}
+	public function postImportUsers(ImportUsersRequest $request)
 	{
 		$file = $request->import_users;
 	}

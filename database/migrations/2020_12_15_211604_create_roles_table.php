@@ -16,17 +16,19 @@ class CreateRolesTable extends Migration
 	{
 		//Schema::defaultStringLength(191);
 		Schema::create('roles', function (Blueprint $table) {
-			$table->tinyIncrements('id');
+			$table->id();
 			$table->string('name', 20);
 		});
 		Schema::create('role_user', function (Blueprint $table) {
-			$table->bigIncrements('id');
-			$table->unsignedBigInteger('user_id');
-			$table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-			$table->unsignedBigInteger('role_id');
-			$table->foreign('role_id')->references('id')->on('roles')->onDelete('cascade');
-			//$table->foreignId('user_id')->constrained()->onDelete('cascade');
-			//$table->foreignId('role_id')->constrained()->onDelete('cascade');
+			$table->id();
+			$table->foreignId('user_id')
+				->constrained('users')
+				->onUpdate('cascade')
+				->onDelete('cascade');
+			$table->foreignId('role_id')
+				->constrained('roles')
+				->onUpdate('cascade')
+				->onDelete('cascade');
 		});
 	}
 
