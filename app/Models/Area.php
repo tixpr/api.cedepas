@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Note extends Model
+class Area extends Model
 {
 	use HasFactory;
 	/**
@@ -13,7 +13,7 @@ class Note extends Model
      *
      * @var string
      */
-	protected $table = 'notes';
+	protected $table = 'areas';
 
 	 /**
      * Indicates if the model should be timestamped.
@@ -28,8 +28,7 @@ class Note extends Model
      * @var array
      */
     protected $fillable = [
-		'name',
-		'course_id'
+        'name'
     ];
 
     /**
@@ -47,12 +46,8 @@ class Note extends Model
      */
     protected $casts = [
 	];
-	public function studentNotes()
+	public function courses()
 	{
-		return $this->hasMany(NoteUser::class,'note_id');
-	}
-	public function students()
-	{
-		return $this->belongsToMany(User::class,'note_user','note_id','user_id');
+		return $this->hasMany(Course::class,'area_id');
 	}
 }

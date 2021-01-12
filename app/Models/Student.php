@@ -29,7 +29,7 @@ class Student extends Model
      */
     protected $fillable = [
 		'user_id',
-		'course_id'
+		'course_group_id'
     ];
 
     /**

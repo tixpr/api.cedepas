@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use App\Models\GroupCourse;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -18,11 +17,16 @@ class DatabaseSeeder extends Seeder
 		$this->call([
 			RoleSeeder::class,
 			UserSeeder::class,
+			RoleUserSeeder::class,
+			AreaSeeder::class,
 			GroupSeeder::class,
-			CourseSeeder::class,
 			StudentSeeder::class,
+			/*
 			NoteSeeder::class,
-			PresenceSeeder::class
+			PresenceSeeder::class,
+			NoteUserSeeder::class,
+			PresenceUserSeeder::class,
+			*/
 		]);
     }
 }

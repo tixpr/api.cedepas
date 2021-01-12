@@ -47,4 +47,12 @@ class Presence extends Model
      */
     protected $casts = [
 	];
+	public function studentPresences()
+	{
+		return $this->hasMany(PresenceUser::class,'presence_id');
+	}
+	public function students()
+	{
+		return $this->belongsToMany(User::class,'presence_user','presence_id','user_id');
+	}
 }

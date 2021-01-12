@@ -16,8 +16,8 @@ class CreatePresencesTable extends Migration
         Schema::create('presences', function (Blueprint $table) {
 			$table->id();
 			$table->date('date');
-			$table->foreignId('course_id')
-				->constrained('courses')
+			$table->foreignId('course_group_id')
+				->constrained('course_group')
 				->onUpdate('cascade')
 				->onDelete('cascade');
         });

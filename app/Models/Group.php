@@ -48,6 +48,6 @@ class Group extends Model
 	];
 	public function courses()
 	{
-		return $this->hasMany(Course::class,'group_id');
+		return $this->belongsToMany(Course::class,'course_group','group_id','course_id');
 	}
 }

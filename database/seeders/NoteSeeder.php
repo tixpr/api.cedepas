@@ -3,9 +3,7 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use App\Models\Course;
-use App\Models\Note;
-use App\Models\NoteUser;
+use Illuminate\Support\Facades\DB;
 
 class NoteSeeder extends Seeder
 {
@@ -16,38 +14,19 @@ class NoteSeeder extends Seeder
      */
     public function run()
     {
-		$pcs = Course::all();
-		foreach($pcs as $pc){
-			$note1 = Note::create([
-				'name'=>'N1',
-				'course_id'=>$pc->id
+		for($i=1;$i<=60;$i++){
+			DB::table('notes')->insert([
+				'name' => 'N1',
+				'course_group_id' => $i
 			]);
-			$note2 = Note::create([
-				'name'=>'N1',
-				'course_id'=>$pc->id
+			DB::table('notes')->insert([
+				'name' => 'N2',
+				'course_group_id' => $i
 			]);
-			$note3 = Note::create([
-				'name'=>'N1',
-				'course_id'=>$pc->id
+			DB::table('notes')->insert([
+				'name' => 'N3',
+				'course_group_id' => $i
 			]);
-			$users = $pc->students;
-			foreach($users as $user){
-				NoteUser::create([
-					'note'=>strval(random_int(0,20)),
-					'note_id'=>$note1->id,
-					'user_id'=>$user->id
-				]);
-				NoteUser::create([
-					'note'=>strval(random_int(0,20)),
-					'note_id'=>$note2->id,
-					'user_id'=>$user->id
-				]);
-				NoteUser::create([
-					'note'=>strval(random_int(0,20)),
-					'note_id'=>$note3->id,
-					'user_id'=>$user->id
-				]);
-			}
 		}
     }
 }

@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Course extends Model
+class CourseGroup extends Model
 {
 	use HasFactory;
 	/**
@@ -13,7 +13,7 @@ class Course extends Model
 	 *
 	 * @var string
 	 */
-	protected $table = 'courses';
+	protected $table = 'course_group';
 
 	/**
 	 * Indicates if the model should be timestamped.
@@ -28,10 +28,9 @@ class Course extends Model
 	 * @var array
 	 */
 	protected $fillable = [
-		'name',
-		'credits',
-		'hours',
-		'area_id'
+		'user_id',
+		'course_id',
+		'group_id'
 	];
 
 	/**
@@ -47,20 +46,27 @@ class Course extends Model
 	 * @var array
 	 */
 	protected $casts = [];
-	public function students()
-	{
-		return $this->belongsToMany(User::class, 'students', 'course_id', 'user_id');
-	}
-	public function notes()
-	{
-		return $this->hasMany(Note::class, 'course_id', 'id');
-	}
-	public function presences()
-	{
-		return $this->hasMany(Presence::class, 'course_id', 'id');
-	}
 	public function teacher()
 	{
 		return $this->belongsTo(User::class, 'user_id');
+	}
+
+	public function course()
+	{
+		return $this->belongsTo(Course::class, 'course_id');
+	}
+
+	public function students()
+	{
+		return $this->belongsToMany(User::class, 'students', 'course_group_id', 'user_id');
+	}
+
+	public function notes()
+	{
+		return $this->hasMany(Note::class, 'course_group_id', 'id');
+	}
+	public function presences()
+	{
+		return $this->hasMany(Presence::class, 'course_group_id', 'id');
 	}
 }

@@ -14,6 +14,18 @@ class GroupSeeder extends Seeder
      */
     public function run()
     {
-        Group::factory(20)->create();
+		Group::factory(10)->create();
+		$groups = Group::orderBy('id','asc')->get();
+		$acum=1;
+		foreach($groups as $group){
+			$group->courses()->attach($acum,['user_id'=>random_int(2,9)]);
+			++$acum;
+			$group->courses()->attach($acum,['user_id'=>random_int(2,9)]);
+			++$acum;
+			$group->courses()->attach($acum,['user_id'=>random_int(2,9)]);
+			++$acum;
+			$group->courses()->attach($acum,['user_id'=>random_int(2,9)]);
+			++$acum;
+		}
     }
 }

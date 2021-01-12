@@ -2,17 +2,17 @@
 
 namespace Database\Factories;
 
-use App\Models\Course;
+use App\Models\RoleUser;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-class CourseFactory extends Factory
+class RoleUserFactory extends Factory
 {
     /**
      * The name of the factory's corresponding model.
      *
      * @var string
      */
-    protected $model = Course::class;
+    protected $model = RoleUser::class;
 
     /**
      * Define the model's default state.
@@ -22,9 +22,7 @@ class CourseFactory extends Factory
     public function definition()
     {
         return [
-			'name' =>	mb_strtoupper($this->faker->firstName),
-			'hours'=>	60,
-			'credits'=> random_int(1,4),
+            
         ];
     }
 }
