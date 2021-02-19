@@ -25,8 +25,8 @@ return [
 		'http://localhost:3000',
 		'seminarioandinosanpablo.org.pe',
 		'*.seminarioandinosanpablo.org.pe',
-		'http://webapp.seminarioandinosanpablo.org.pe',
-		'https://webapp.seminarioandinosanpablo.org.pe'
+		'https://webapp.seminarioandinosanpablo.org.pe',
+		'http://webapp.seminarioandinosanpablo.org.pe'
 	],
 
 	'allowed_origins_patterns' => [],

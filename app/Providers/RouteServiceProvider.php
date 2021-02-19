@@ -17,7 +17,7 @@ class RouteServiceProvider extends ServiceProvider
      *
      * @var string
      */
-    public const HOME = 'http://localhost:3000/';
+    public const HOME = 'https://webapp.seminarioandinosanpablo.org.pe/';
 
     /**
      * The controller namespace for the application.
