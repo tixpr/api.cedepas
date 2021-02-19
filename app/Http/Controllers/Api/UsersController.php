@@ -12,7 +12,7 @@ use App\Http\Resources\UserInfoResource;
 
 class UsersController extends Controller
 {
-	public function activeRegister()
+	public function activeRegister(Request $request)
 	{
 		$register = GlobalVar::findOrFail('register');
 		$register->value_boolean = !$register->value_boolean;
@@ -22,7 +22,7 @@ class UsersController extends Controller
 		]);
 	}
 
-	public function getRegister()
+	public function getRegister(Request $request)
 	{
 		$register = GlobalVar::where('name', 'register')->firstOrFail();
 		return response()->json([

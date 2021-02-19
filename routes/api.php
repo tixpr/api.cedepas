@@ -27,10 +27,10 @@ use App\Http\Controllers\Api\MatriculaController;
 Route::middleware(['auth:sanctum', 'active', 'verified'])->get('/user', function (Request $request) {
 	return new UserInfoResource($request->user());
 });
-Route::get('/register', [UsersController::class, 'getRegister']);
+Route::get('/is_register', [UsersController::class, 'getRegister']);
 Route::middleware(['auth:sanctum', 'admin', 'active', 'verified'])->group(function () {
 	//Registro
-	Route::put('/register', [UsersController::class, 'activeRegister']);
+	Route::put('/is_register', [UsersController::class, 'activeRegister']);
 	//USUARIOS
 	Route::prefix('users')->group(function () {
 		Route::get('/', [UsersController::class, 'getUsers']);
