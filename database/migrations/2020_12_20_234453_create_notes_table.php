@@ -16,6 +16,7 @@ class CreateNotesTable extends Migration
         Schema::create('notes', function (Blueprint $table) {
             $table->id();
 			$table->string('name');
+			$table->boolean('is_end')->default(false);
 			$table->foreignId('course_group_id')
 				->constrained('course_group')
 				->onUpdate('cascade')

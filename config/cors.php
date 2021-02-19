@@ -19,7 +19,15 @@ return [
 
 	'allowed_methods' => ['*'],
 
-	'allowed_origins' => ['http://localhost:3000', 'http://192.168.1.11:3000'],
+	'allowed_origins' => [
+		'localhost',
+		'localhost:3000',
+		'http://localhost:3000',
+		'seminarioandinosanpablo.org.pe',
+		'*.seminarioandinosanpablo.org.pe',
+		'http://webapp.seminarioandinosanpablo.org.pe',
+		'https://webapp.seminarioandinosanpablo.org.pe'
+	],
 
 	'allowed_origins_patterns' => [],
 

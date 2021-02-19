@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Group;
-use App\http\Resources\GroupResource;
+use App\Http\Resources\GroupResource;
 use App\Http\Resources\CourseGroupResource;
 use App\Models\CourseGroup;
 
@@ -18,14 +18,20 @@ class GroupController extends Controller
 	public function postGroups(Request $request)
 	{
 		$group = Group::create([
-			'name' => mb_strtoupper($request->name)
+			'name' => $request->name,
+			'start' => $request->start,
+			'end' => $request->end,
+			'pre_register_enabled' => true
 		]);
 		return new GroupResource($group);
 	}
 	public function putGroup(Request $request, $group_id)
 	{
 		$group = Group::findOrFail($group_id);
-		$group->name = mb_strtoupper($request->name);
+		$group->name = $request->name;
+		$group->start = $request->start;
+		$group->end = $request->end;
+		$group->pre_register_enabled = $request->pre_register_enabled;
 		$group->save();
 		return new GroupResource($group);
 	}

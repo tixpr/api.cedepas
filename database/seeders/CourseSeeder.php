@@ -3,7 +3,8 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use App\Models\Course;
+use App\Imports\CoursesImport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class CourseSeeder extends Seeder
 {
@@ -14,6 +15,6 @@ class CourseSeeder extends Seeder
      */
     public function run()
     {
-        Course::factory(40)->create();
+        Excel::import(new CoursesImport,database_path('cursos.xlsx'));
     }
 }

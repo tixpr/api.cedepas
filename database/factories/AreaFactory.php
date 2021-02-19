@@ -22,7 +22,7 @@ class AreaFactory extends Factory
 	public function definition()
 	{
 		return [
-			'name' => mb_strtoupper($this->faker->firstNameFemale)
+			'name' => $this->faker->firstNameFemale
 		];
 	}
 }

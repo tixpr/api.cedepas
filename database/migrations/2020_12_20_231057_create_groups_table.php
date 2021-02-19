@@ -16,6 +16,9 @@ class CreateGroupsTable extends Migration
         Schema::create('groups', function (Blueprint $table) {
             $table->id();
             $table->string('name');
+			$table->date('start');
+			$table->date('end');
+			$table->boolean('pre_register_enabled')->default(true);
         });
     }
 

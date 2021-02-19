@@ -14,9 +14,11 @@ class CourseController extends Controller
 	{
 		Area::findOrFail($area_id);
 		$course = Course::create([
-			'name' => mb_strtoupper($request->name),
+			'name' => $request->name,
 			'credits' => $request->credits,
 			'hours' => $request->hours,
+			'code'	=>	$request->code,
+			'program' => $request->program,
 			'area_id' => $area_id
 		]);
 		return new CourseResource($course);
@@ -24,9 +26,11 @@ class CourseController extends Controller
 	public function putCourse(Request $request, $course_id)
 	{
 		$course = Course::findOrFail($course_id);
-		$course->name = mb_strtoupper($request->name);
+		$course->name = $request->name;
 		$course->credits = $request->credits;
 		$course->hours = $request->hours;
+		$course->code = $request->code;
+		$course->program = $request->program;
 		$course->save();
 		return new CourseResource($course);
 	}

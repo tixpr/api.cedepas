@@ -22,7 +22,7 @@ class GroupFactory extends Factory
     public function definition()
     {
         return [
-            'name'	=>	mb_strtoupper($this->faker->firstNameMale),
+            'name'	=>	$this->faker->firstNameMale,
         ];
     }
 }

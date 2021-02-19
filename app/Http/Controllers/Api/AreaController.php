@@ -17,14 +17,14 @@ class AreaController extends Controller
 	public function postArea(Request $request)
 	{
 		$area = Area::create([
-			'name' => mb_strtoupper($request->name)
+			'name' => $request->name
 		]);
 		return new AreaResource($area);
 	}
 	public function putArea(Request $request, $area_id)
 	{
 		$area = Area::findOrFail($area_id);
-		$area->name = mb_strtoupper($request->name);
+		$area->name = $request->name;
 		$area->save();
 		return new AreaResource($area);
 	}

@@ -60,11 +60,15 @@ class CourseGroup extends Model
 	{
 		return $this->belongsToMany(User::class, 'students', 'course_group_id', 'user_id');
 	}
-
+	public function matriculas()
+	{
+		return $this->belongsToMany(User::class, 'matriculas', 'course_group_id', 'user_id');
+	}
 	public function notes()
 	{
 		return $this->hasMany(Note::class, 'course_group_id', 'id');
 	}
+	
 	public function presences()
 	{
 		return $this->hasMany(Presence::class, 'course_group_id', 'id');

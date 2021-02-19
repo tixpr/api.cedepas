@@ -27,6 +27,9 @@ class CreateUserRequest extends FormRequest
 			'firstname' => 'required',
 			'lastname' => 'required',
 			'email' => 'required|email|unique:users,email',
+			'phone'	=> 'nullable|string',
+			'teacher' => 'boolean',
+			'student' => 'boolean'
 		];
 	}
 	/**
@@ -40,7 +43,10 @@ class CreateUserRequest extends FormRequest
 			'firstname.required' => 'El nombre(s) es obligatorio',
 			'lastname.required' => 'Los apellidos son obligatorio',
 			'email.required' => 'El correo es obligatorio',
-			'email.unique' => 'El correo ya existe'
+			'email.unique' => 'El correo ya existe',
+			'phone.string' => 'El valor del celular es invalido',
+			'teacher.boolean' => 'Especifique si sera docente',
+			'student.boolean' => 'Especifique si sera estudiante',
 		];
 	}
 }

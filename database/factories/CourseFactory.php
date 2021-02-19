@@ -22,7 +22,7 @@ class CourseFactory extends Factory
     public function definition()
     {
         return [
-			'name' =>	mb_strtoupper($this->faker->firstName),
+			'name' =>	$this->faker->firstName,
 			'hours'=>	60,
 			'credits'=> random_int(1,4),
         ];

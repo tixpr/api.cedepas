@@ -30,6 +30,8 @@ class Course extends Model
 	protected $fillable = [
 		'name',
 		'credits',
+		'program',
+		'code',
 		'hours',
 		'area_id'
 	];

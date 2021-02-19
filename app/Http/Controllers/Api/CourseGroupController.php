@@ -12,6 +12,7 @@ use App\Http\Resources\CourseGroupResource;
 use App\Http\Resources\CourseGroupViewResource;
 use App\Models\Course;
 use App\Models\Role;
+use App\Models\User;
 
 class CourseGroupController extends Controller
 {
@@ -49,5 +50,34 @@ class CourseGroupController extends Controller
 		$cg = CourseGroup::findOrFail($course_group_id);
 		$cg->delete();
 		return response()->json([]);
+	}
+	public function getSearchStudent(Request $request, $course_group_id)
+	{
+		$cg = CourseGroup::findOrFail($course_group_id);
+		$students = $cg->students;
+		$stids = [];
+		foreach ($students as $student) {
+			array_push($stids, $student->id);
+		}
+		$student_role = Role::where('name', 'Estudiante')->firstOrFail();
+		$get_students = User::orderBy('users.id', 'desc')->whereNotIn('users.id', $stids)->whereHas('roles', function ($query) use ($student_role) {
+			return $query->where('role_id', $student_role->id);
+		})->where('users.lastname', 'LIKE', "%{$request->search}%")->get();
+		return TeacherResource::collection($get_students);
+	}
+	public function postStudent(Request $request, $course_group_id)
+	{
+		$user = User::findOrFail($request->user_id);
+		$cg = CourseGroup::findOrFail($course_group_id);
+		$cg->students()->attach($user->id);
+		$notes = $cg->notes;
+		$presences = $cg->presences;
+		foreach ($notes as $note) {
+			$note->students()->attach($user->id, ['note' => 0]);
+		}
+		foreach ($presences as $presence) {
+			$presence->students()->attach($user->id, ['presence' => false]);
+		}
+		return new TeacherResource($user);
 	}
 }

@@ -16,7 +16,10 @@ class GroupResource extends JsonResource
 	{
 		return [
 			'id' => $this->id,
-			'name' => $this->name
+			'name' => $this->name,
+			'start'=>$this->start,
+			'end'=>$this->end,
+			'pre_register'=>$this->pre_register_enabled
 		];
 	}
 }

@@ -28,7 +28,10 @@ class Group extends Model
      * @var array
      */
     protected $fillable = [
-        'name'
+        'name',
+		'start',
+		'end',
+		'pre_register_enabled'
     ];
 
     /**

@@ -6,11 +6,30 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Role;
+use App\Models\GlobalVar;
 use App\Http\Requests\CreateUserRequest;
-use App\Http\Requests\ImportUsersRequest;
+use App\Http\Resources\UserInfoResource;
 
 class UsersController extends Controller
 {
+	public function activeRegister()
+	{
+		$register = GlobalVar::findOrFail('register');
+		$register->value_boolean = !$register->value_boolean;
+		$register->save();
+		return response()->json([
+			'register' => $register->value_boolean,
+		]);
+	}
+
+	public function getRegister()
+	{
+		$register = GlobalVar::where('name', 'register')->firstOrFail();
+		return response()->json([
+			'register' => $register->value_boolean,
+		]);
+	}
+
 	protected function idRoles($request)
 	{
 		$temp = null;
@@ -33,16 +52,16 @@ class UsersController extends Controller
 		}
 		return $ids;
 	}
-	
+
 	protected function createUserQuery(Request $request, $ids)
 	{
 		$users = null;
-		if(count($ids)>0){
-			$users = User::orderBy('users.id','desc')->whereHas('roles',function ($query) use($ids){
-				return $query->whereIn('role_id',$ids);
+		if (count($ids) > 0) {
+			$users = User::orderBy('users.id', 'desc')->whereHas('roles', function ($query) use ($ids) {
+				return $query->whereIn('role_id', $ids);
 			});
-		}else{
-			$users = User::orderBy('users.id','desc');
+		} else {
+			$users = User::orderBy('users.id', 'desc');
 		}
 		return $users;
 	}
@@ -51,67 +70,87 @@ class UsersController extends Controller
 	{
 		$users = null;
 		$ids = $this->idRoles($request);
-		$users = $this->createUserQuery($request,$ids);
-		if(!empty($request->search)){
-			$s = mb_strtoupper($request->search);
-			if(count($ids)>0){
-				$users->where('users.firstname', 'LIKE', "%{$s}%")->orWhere('users.lastname', 'LIKE', "%{$s}%");
-			}else{
-				$users->where('firstname', 'LIKE', "%{$s}%")->orWhere('lastname', 'LIKE', "%{$s}%");
+		$users = $this->createUserQuery($request, $ids);
+		if (!empty($request->search)) {
+			if (count($ids) > 0) {
+				$users->where('users.firstname', 'LIKE', "%{$request->search}%")->orWhere('users.lastname', 'LIKE', "%{$request->search}%");
+			} else {
+				$users->where('firstname', 'LIKE', "%{$request->search}%")->orWhere('lastname', 'LIKE', "%{$request->search}%");
 			}
 		}
-		return response()->json($users->paginate(20));
+		return UserInfoResource::collection($users->paginate(20));
 	}
 	public function getTeachers(Request $request)
 	{
-		$users = User::orderBy('users.id','desc')->whereHas('roles',function ($query){
-			return $query->where('role_id',3);
-		})->get();	
-		return response()->json([
-			'data'=>$users
-		]);
+		$teacher_role = Role::where('name', 'Docente')->firstOrFail();
+		$users = User::orderBy('users.id', 'desc')->whereHas('roles', function ($query) use ($teacher_role) {
+			return $query->where('role_id', $teacher_role->id);
+		})->get();
+		return UserInfoResource::collection($users);
+	}
+	private function editUserRoles($user, $teacher, $student)
+	{
+		$roles = $user->roles;
+		$is_teacher = false;
+		$is_student = false;
+		foreach ($roles as $role) {
+			if ($role->name === "Docente") {
+				$is_teacher = true;
+			}
+			if ($role->name === "Estudiante") {
+				$is_student = true;
+			}
+		}
+		$teacher_role = Role::where('name', "Docente")->firstOrFail();
+		if ($teacher && !$is_teacher) {
+			$user->roles()->attach($teacher_role->id);
+		} else if (!$teacher && $is_teacher) {
+			$user->roles()->detach($teacher_role->id);
+		}
+		$student_role = Role::where('name', "Estudiante")->firstOrFail();
+		if ($student && !$is_student) {
+			$user->roles()->attach($student_role->id);
+		} else if (!$student && $is_student) {
+			$user->roles()->detach($student_role->id);
+		}
 	}
 	public function postUser(CreateUserRequest $request)
 	{
-		$user = new User;
-		$user->firstname =mb_strtoupper($request->firstname);
-		$user->lastname = mb_strtoupper($request->lastname); 
-		$user->password = bcrypt('password');
-		$user->active=true;
-		$user->email=$request->email;
-		$user->cell_phone=$request->phone;
-		$user->save();
-		return response()->json(['data'=>$user]);
+		$user = User::create([
+			'firstname' => $request->firstname,
+			'lastname' => $request->lastname,
+			'password' => bcrypt('password'),
+			'active' => true,
+			'email' => $request->email,
+			'phone' => $request->phone,
+		]);
+		$this->editUserRoles($user, $request->boolean('teacher'), $request->boolean('student'));
+		return new UserInfoResource($user);
 	}
-	public function putUser(Request $request,$user_id)
+	public function putUser(Request $request, $user_id)
 	{
 		$user = User::findOrFail($user_id);
-		$user->firstname = mb_strtoupper($request->firstname);
-		$user->lastname = mb_strtoupper($request->lastname);
-		$user->email=$request->email;
-		$user->cell_phone=$request->phone;
-		$user->save();
-		return response()->json([
-			'data'=>$user
+		$user->update([
+			'firstname' => $request->firstname,
+			'lastname' => $request->lastname,
+			'email' => $request->email,
+			'phone' => $request->phone,
 		]);
+		$this->editUserRoles($user, $request->boolean('teacher'), $request->boolean('student'));
+		return new UserInfoResource($user);
 	}
-	public function putUserActive(Request $request,$user_id)
+	public function putUserActive(Request $request, $user_id)
 	{
 		$user = User::findOrFail($user_id);
-		$user->active = !$user->active;
-		$user->save();
-		return response()->json([
-			'data'=>$user
+		$user->update([
+			'active' => !$user->active
 		]);
+		return new UserInfoResource($user);
 	}
-	public function deleteUser(Request $request,$user_id)
+	public function deleteUser(Request $request, $user_id)
 	{
 		$user = User::findOrFail($user_id);
 		$user->delete();
 		return response()->json([]);
-	}
-	public function postImportUsers(ImportUsersRequest $request)
-	{
-		$file = $request->import_users;
 	}
 }
