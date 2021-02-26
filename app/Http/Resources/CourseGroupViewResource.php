@@ -23,7 +23,7 @@ class CourseGroupViewResource extends JsonResource
 				'hours' => $course->hours,
 			],
 			'teacher' => new StudentResource($this->teacher),
-			'students' => StudentResource::collection($this->students),
+			'students' => StudentResource::collection($this->students()->orderBy('users.lastname', 'asc')->get()),
 			'notes' => NoteResource::collection($this->notes),
 			'presences' => PresenceResource::collection($this->presences)
 		];

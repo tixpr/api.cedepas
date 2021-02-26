@@ -64,6 +64,10 @@ class CourseGroup extends Model
 	{
 		return $this->belongsToMany(User::class, 'matriculas', 'course_group_id', 'user_id');
 	}
+	public function student_pagos()
+	{
+		return $this->belongsToMany(User::class, 'student_pagos', 'course_group_id', 'user_id');
+	}
 	public function notes()
 	{
 		return $this->hasMany(Note::class, 'course_group_id', 'id');

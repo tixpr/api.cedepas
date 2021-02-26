@@ -68,4 +68,13 @@ class User extends Authenticatable implements MustVerifyEmail
 		}
 		return $this->belongsToMany(CourseGroup::class, 'students', 'user_id', 'course_group_id')->where('course_group.group_id',$group_id);
 	}
+	//notas
+	public function notes()
+	{
+		return $this->belongsToMany(Note::class, 'note_user', 'user_id', 'note_id');
+	}
+	public function courses()
+	{
+		return $this->belongsToMany(Course::class, 'course_group', 'user_id', 'course_id');
+	}
 }

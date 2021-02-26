@@ -31,7 +31,8 @@ class Pago extends Model
 		'student_pago_id',
 		'mont',
 		'image',
-		'approved'
+		'approved',
+		'vaucher'
 	];
 
 	/**

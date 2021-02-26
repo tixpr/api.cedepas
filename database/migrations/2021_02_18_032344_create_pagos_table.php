@@ -17,6 +17,7 @@ class CreatePagosTable extends Migration
 			$table->id();
 			$table->unsignedInteger('mont');
 			$table->boolean('approved')->default(false);
+			$table->string('vaucher');
 			$table->foreignId('student_pago_id')
 				->constrained('student_pagos')
 				->onUpdate('cascade')

@@ -13,6 +13,8 @@ use App\Http\Resources\CourseGroupViewResource;
 use App\Models\Course;
 use App\Models\Role;
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
+use PDOException;
 
 class CourseGroupController extends Controller
 {
@@ -69,14 +71,26 @@ class CourseGroupController extends Controller
 	{
 		$user = User::findOrFail($request->user_id);
 		$cg = CourseGroup::findOrFail($course_group_id);
-		$cg->students()->attach($user->id);
-		$notes = $cg->notes;
-		$presences = $cg->presences;
-		foreach ($notes as $note) {
-			$note->students()->attach($user->id, ['note' => 0]);
-		}
-		foreach ($presences as $presence) {
-			$presence->students()->attach($user->id, ['presence' => false]);
+		DB::beginTransaction();
+		try{
+			$cg->students()->attach($user->id);
+			$notes = $cg->notes;
+			$presences = $cg->presences;
+			foreach ($notes as $note) {
+				$note->students()->attach($user->id, ['note' => 0]);
+			}
+			foreach ($presences as $presence) {
+				$presence->students()->attach($user->id, ['presence' => false]);
+			}
+			DB::commit();
+		}catch (PDOException $e){
+			DB::rollBack();
+			if ($request->wantsJson()) {
+				return response()->json([
+					'message' => 'Error en la transacción'
+				], 500);
+			}
+			throw $e;
 		}
 		return new TeacherResource($user);
 	}
