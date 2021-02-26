@@ -46,4 +46,8 @@ class StudentPago extends Model
 	 * @var array
 	 */
 	protected $casts = [];
+	public function pagos()
+	{
+		return $this->hasMany(Pago::class, 'student_pago_id');
+	}
 }

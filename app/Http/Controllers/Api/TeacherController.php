@@ -16,6 +16,8 @@ use App\Models\Note;
 use App\Models\NoteUser;
 use App\Models\Presence;
 use App\Models\PresenceUser;
+use Illuminate\Support\Facades\DB;
+use PDOException;
 
 class TeacherController extends Controller
 {
@@ -48,17 +50,29 @@ class TeacherController extends Controller
 			}
 		}
 		$students = $course_group->students;
-		$note = Note::create([
-			'course_group_id' => $course_group_id,
-			'name' => $request->name,
-			'is_end' => $request->is_end,
-		]);
-		foreach ($students as $student) {
-			NoteUser::create([
-				'note' => $request->input('st_' . $student->id),
-				'user_id' => $student->id,
-				'note_id' => $note->id,
+		DB::beginTransaction();
+		try {
+			$note = Note::create([
+				'course_group_id' => $course_group_id,
+				'name' => $request->name,
+				'is_end' => $request->is_end,
 			]);
+			foreach ($students as $student) {
+				NoteUser::create([
+					'note' => $request->input('st_' . $student->id),
+					'user_id' => $student->id,
+					'note_id' => $note->id,
+				]);
+			}
+			DB::commit();
+		} catch (PDOException $e) {
+			DB::rollBack();
+			if ($request->wantsJson()) {
+				return response()->json([
+					'message' => 'Error en la transacción'
+				], 500);
+			}
+			throw $e;
 		}
 		return new NoteResource($note);
 	}
@@ -66,16 +80,28 @@ class TeacherController extends Controller
 	{
 		$course_group = CourseGroup::findOrFail($course_group_id);
 		$students = $course_group->students;
-		$presence = Presence::create([
-			'course_group_id' => $course_group_id,
-			'date' => $request->date,
-		]);
-		foreach ($students as $student) {
-			PresenceUser::create([
-				'presence' => $request->input('st_' . $student->id),
-				'user_id' => $student->id,
-				'presence_id' => $presence->id,
+		DB::beginTransaction();
+		try {
+			$presence = Presence::create([
+				'course_group_id' => $course_group_id,
+				'date' => $request->date,
 			]);
+			foreach ($students as $student) {
+				PresenceUser::create([
+					'presence' => $request->input('st_' . $student->id),
+					'user_id' => $student->id,
+					'presence_id' => $presence->id,
+				]);
+			}
+			DB::commit();
+		} catch (PDOException $e) {
+			DB::rollBack();
+			if ($request->wantsJson()) {
+				return response()->json([
+					'message' => 'Error en la transacción'
+				], 500);
+			}
+			throw $e;
 		}
 		return new PresenceResource($presence);
 	}

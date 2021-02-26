@@ -12,6 +12,8 @@ use App\Http\Controllers\Api\TeacherController;
 use App\Http\Controllers\Api\StudentController;
 use App\Http\Controllers\Api\BookController;
 use App\Http\Controllers\Api\MatriculaController;
+use App\Http\Controllers\Api\PagosController;
+use App\Http\Controllers\CertificadoController;
 
 /*
 |--------------------------------------------------------------------------
@@ -29,7 +31,7 @@ Route::middleware(['auth:sanctum', 'active', 'verified'])->get('/user', function
 });
 Route::get('/is_register', [UsersController::class, 'getRegister']);
 Route::middleware(['auth:sanctum', 'admin', 'active', 'verified'])->group(function () {
-	//Registro
+	//activar desactivar Registro de nuevos usuarios
 	Route::put('/is_register', [UsersController::class, 'activeRegister']);
 	//USUARIOS
 	Route::prefix('users')->group(function () {
@@ -66,10 +68,10 @@ Route::middleware(['auth:sanctum', 'admin', 'active', 'verified'])->group(functi
 		});
 	});
 	//matriculas
-	Route::prefix('matriculas/{course_group_id}')->group(function(){
-		Route::get('/',[MatriculaController::class,'getMatriculaStudent']);
-		Route::post('/',[MatriculaController::class,'postMatriculaStudent']);
-		Route::delete('/{user_id}',[MatriculaController::class,'deleteMatriculaStudent']);
+	Route::prefix('matriculas/{course_group_id}')->group(function () {
+		Route::get('/', [MatriculaController::class, 'getMatriculaStudent']);
+		Route::post('/', [MatriculaController::class, 'postMatriculaStudent']);
+		Route::delete('/{user_id}', [MatriculaController::class, 'deleteMatriculaStudent']);
 	});
 	//cursos y docentes
 	Route::get('courses_teachers/{group_id}', [CourseGroupController::class, 'getCoursesTeachers']);
@@ -88,6 +90,13 @@ Route::middleware(['auth:sanctum', 'admin', 'active', 'verified'])->group(functi
 		Route::put('/{book_id}', [BookController::class, 'putBook']);
 		Route::delete('/{book_id}', [BookController::class, 'deleteBook']);
 	});
+	//pagos
+	Route::get('pagos/{course_group_id}', [PagosController::class, 'getPagos']);
+	Route::put('student_pago/{student_pago_id}', [PagosController::class, 'putStudentPago']);
+	Route::put('pago/{pago_id}', [PagosController::class, 'putPago']);
+	Route::delete('pago/{pago_id}', [PagosController::class, 'deletePago']);
+	//certificados
+	Route::get('certificado/{user_id}', [CertificadoController::class, 'getCertificado']);
 });
 
 //docente
@@ -109,7 +118,18 @@ Route::middleware(['auth:sanctum', 'student', 'active', 'verified'])->group(func
 	Route::prefix('student')->group(function () {
 		Route::get('groups', [StudentController::class, 'getGroups']);
 		Route::get('groups/{group_id}', [StudentController::class, 'getCoursesGroup']);
-		Route::get('course_group/{course_group_id}', [StudentController::class, 'getCourseGroup']);
+		Route::prefix('course_group/{course_group_id}')->group(function () {
+			Route::get('/', [StudentController::class, 'getCourseGroup']);
+			Route::get('/pagos', [StudentController::class, 'getPagos']);
+			Route::post('/pagos', [StudentController::class, 'postPagos']);
+			Route::post('/vaucher', [StudentController::class, 'postVaucher']);
+		});
+		Route::prefix('pre_register')->group(function () {
+			Route::get('/', [StudentController::class, 'getGroupsRegister']);
+			Route::post('/course/{course_group_id}', [StudentController::class, 'postPreRegister']);
+			Route::get('/{group_id}', [StudentController::class, 'getCoursesGroupRegister']);
+		});
+		Route::get('certificado', [CertificadoController::class, 'getStudentCertificado']);
 	});
 });
 Route::middleware(['auth:sanctum', 'active', 'verified'])->group(function () {

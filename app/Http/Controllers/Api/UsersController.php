@@ -9,6 +9,8 @@ use App\Models\Role;
 use App\Models\GlobalVar;
 use App\Http\Requests\CreateUserRequest;
 use App\Http\Resources\UserInfoResource;
+use PDOException;
+use Illuminate\Support\Facades\DB;
 
 class UsersController extends Controller
 {
@@ -116,35 +118,58 @@ class UsersController extends Controller
 	}
 	public function postUser(CreateUserRequest $request)
 	{
-		$user = User::create([
-			'firstname' => $request->firstname,
-			'lastname' => $request->lastname,
-			'password' => bcrypt('password'),
-			'active' => true,
-			'email' => $request->email,
-			'phone' => $request->phone,
-		]);
-		$this->editUserRoles($user, $request->boolean('teacher'), $request->boolean('student'));
+		DB::beginTransaction();
+		try {
+			$user = User::create([
+				'firstname' => $request->firstname,
+				'lastname' => $request->lastname,
+				'password' => bcrypt('password'),
+				'active' => true,
+				'email' => $request->email,
+				'phone' => $request->phone,
+			]);
+			$this->editUserRoles($user, $request->boolean('teacher'), $request->boolean('student'));
+			DB::commit();
+		} catch (PDOException $e) {
+			DB::rollBack();
+			if ($request->wantsJson()) {
+				return response()->json([
+					'message' => 'Error en la transacción'
+				], 500);
+			}
+			throw $e;
+		}
 		return new UserInfoResource($user);
 	}
 	public function putUser(Request $request, $user_id)
 	{
 		$user = User::findOrFail($user_id);
-		$user->update([
-			'firstname' => $request->firstname,
-			'lastname' => $request->lastname,
-			'email' => $request->email,
-			'phone' => $request->phone,
-		]);
-		$this->editUserRoles($user, $request->boolean('teacher'), $request->boolean('student'));
+		DB::beginTransaction();
+		try {
+			$user->update([
+				'firstname' => $request->firstname,
+				'lastname' => $request->lastname,
+				'email' => $request->email,
+				'phone' => $request->phone,
+			]);
+			$this->editUserRoles($user, $request->boolean('teacher'), $request->boolean('student'));
+			DB::commit();
+		} catch (PDOException $e) {
+			DB::rollBack();
+			if ($request->wantsJson()) {
+				return response()->json([
+					'message' => 'Error en la transacción'
+				], 500);
+			}
+			throw $e;
+		}
 		return new UserInfoResource($user);
 	}
 	public function putUserActive(Request $request, $user_id)
 	{
 		$user = User::findOrFail($user_id);
-		$user->update([
-			'active' => !$user->active
-		]);
+		$user->active = !$user->active;
+		$user->save();
 		return new UserInfoResource($user);
 	}
 	public function deleteUser(Request $request, $user_id)

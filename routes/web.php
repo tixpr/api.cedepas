@@ -2,13 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\LoginController;
-//para probar emails
-use App\Models\User;
-use App\Mail\EmailConfirmMail;
-use App\Mail\PasswordRecoverMail;
-use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Str;
 
 /*
 |--------------------------------------------------------------------------
