@@ -21,7 +21,7 @@ class UserActiveMiddleware
 			return $next($request);
 		}
 		return response()->json([
-			'message' => 'Usuario Inhabilitado'
+			'message' => 'Usuario Inhabilitado debido a la falta de pago, favor de comunicarse con los encargados'
 		], 403);
     }
 }
