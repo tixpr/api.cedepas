@@ -143,33 +143,27 @@ class UsersController extends Controller
 	}
 	public function putUser(Request $request, $user_id)
 	{
-		if (intval($user_id) !== 1) {
-			$user = User::findOrFail($user_id);
-			DB::beginTransaction();
-			try {
-				$user->update([
-					'firstname' => $request->firstname,
-					'lastname' => $request->lastname,
-					'email' => $request->email,
-					'phone' => $request->phone,
-				]);
-				$this->editUserRoles($user, $request->boolean('teacher'), $request->boolean('student'));
-				DB::commit();
-			} catch (PDOException $e) {
-				DB::rollBack();
-				if ($request->wantsJson()) {
-					return response()->json([
-						'message' => 'Error en la transacción'
-					], 500);
-				}
-				throw $e;
+		$user = User::findOrFail($user_id);
+		DB::beginTransaction();
+		try {
+			$user->update([
+				'firstname' => $request->firstname,
+				'lastname' => $request->lastname,
+				'email' => $request->email,
+				'phone' => $request->phone,
+			]);
+			$this->editUserRoles($user, $request->boolean('teacher'), $request->boolean('student'));
+			DB::commit();
+		} catch (PDOException $e) {
+			DB::rollBack();
+			if ($request->wantsJson()) {
+				return response()->json([
+					'message' => 'Error en la transacción'
+				], 500);
 			}
-			return new UserInfoResource($user);
-		} else {
-			return response()->json([
-				'message' => 'No se permite la edición de este usuario',
-			], 500);
+			throw $e;
 		}
+		return new UserInfoResource($user);
 	}
 	public function putUserActive(Request $request, $user_id)
 	{
