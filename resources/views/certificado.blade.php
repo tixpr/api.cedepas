@@ -91,6 +91,9 @@
 		.footer{
 			text-align: right;
 		}
+		.cursiva{
+			font-style: italic;
+		}
 	</style>
 </head>
 <body>
@@ -158,11 +161,11 @@
 		</div>
 		<div>
 			<span class="firma-nombre">
-				Lic. Cesar Llanco Zavaleta
+				Lic. César Llanco Zavaleta
 			</span>
 		</div>
 		<div class="text-center">
-			<span>
+			<span class="cursiva">
 				Director
 			</span>
 		</div>
