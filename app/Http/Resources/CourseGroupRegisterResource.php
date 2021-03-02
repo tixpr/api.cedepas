@@ -14,9 +14,11 @@ class CourseGroupRegisterResource extends JsonResource
 	 */
 	public function toArray($request)
 	{
+		$teacher = $this->teacher()->firstOrFail();
 		return [
 			'id' => $this->id,
 			'name' => $this->name,
+			'teacher' =>  $teacher->firstname . ' ' . $teacher->lastname
 		];
 	}
 }

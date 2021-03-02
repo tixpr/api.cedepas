@@ -19,6 +19,7 @@ class StudentSeeder extends Seeder
 	 */
 	public function run()
 	{
+		/*
 		$id = 1;
 		$inicio = 10;
 		$final = $inicio + 21;
@@ -87,5 +88,6 @@ class StudentSeeder extends Seeder
 			$final += 21;
 			$id += 5;
 		} while ($id < 25);
+		*/
 	}
 }

@@ -25,16 +25,17 @@ class UserSeeder extends Seeder
 		$admin = User::create([
 			'firstname' => 'Administrador',
 			'lastname' => 'CEDEPAS',
-			'email' => 'cedepas_admin@gmail.com',
-			'password' => bcrypt('contraseña'),
+			'email' => 'cedepas.webapp@gmail.com',
+			'password' => bcrypt('c3d3p@sc3ntr0'),
 			'email_verified_at' => now(),
 			'created_at' => now(),
 			'updated_at' => now(),
 		]);
-		$admin->roles()->attach(1);
-		$admin->roles()->attach(2);
+		//$admin->roles()->attach(1);
+		//$admin->roles()->attach(2);
 		$admin->roles()->attach(3);
 		//2-10
+		/*
 		for ($i = 2; $i <= 10; $i++) {
 			$n = $i - 1;
 			$teacher = User::create([
@@ -48,7 +49,9 @@ class UserSeeder extends Seeder
 			]);
 			$teacher->roles()->attach(2);
 		}
+		*/
 		//11-211
+		/*
 		for ($j = 11; $j <= 150; $j++) {
 			$n = $j - 10;
 			$student = User::create([
@@ -63,6 +66,7 @@ class UserSeeder extends Seeder
 			]);
 			$student->roles()->attach(1);
 		}
+		*/
 		//User::factory(1500)->create();
 	}
 }

@@ -16,6 +16,7 @@ class GroupSeeder extends Seeder
 	{
 		//Group::factory(10)->create();
 		//$groups = Group::orderBy('id','asc')->get();
+		/*
 		for ($i = 1; $i <= 5; $i++) {
 			$group = Group::create([
 				'name' => 'Grupo ' . $i,
@@ -29,5 +30,6 @@ class GroupSeeder extends Seeder
 			$group->courses()->attach(random_int(37, 39), ['user_id' => random_int(1, 9)]);
 			$group->courses()->attach(random_int(40, 46), ['user_id' => random_int(1, 9)]);
 		}
+		*/
 	}
 }

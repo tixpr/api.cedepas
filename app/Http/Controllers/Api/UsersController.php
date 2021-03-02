@@ -143,39 +143,57 @@ class UsersController extends Controller
 	}
 	public function putUser(Request $request, $user_id)
 	{
-		$user = User::findOrFail($user_id);
-		DB::beginTransaction();
-		try {
-			$user->update([
-				'firstname' => $request->firstname,
-				'lastname' => $request->lastname,
-				'email' => $request->email,
-				'phone' => $request->phone,
-			]);
-			$this->editUserRoles($user, $request->boolean('teacher'), $request->boolean('student'));
-			DB::commit();
-		} catch (PDOException $e) {
-			DB::rollBack();
-			if ($request->wantsJson()) {
-				return response()->json([
-					'message' => 'Error en la transacción'
-				], 500);
+		if (intval($user_id) !== 1) {
+			$user = User::findOrFail($user_id);
+			DB::beginTransaction();
+			try {
+				$user->update([
+					'firstname' => $request->firstname,
+					'lastname' => $request->lastname,
+					'email' => $request->email,
+					'phone' => $request->phone,
+				]);
+				$this->editUserRoles($user, $request->boolean('teacher'), $request->boolean('student'));
+				DB::commit();
+			} catch (PDOException $e) {
+				DB::rollBack();
+				if ($request->wantsJson()) {
+					return response()->json([
+						'message' => 'Error en la transacción'
+					], 500);
+				}
+				throw $e;
 			}
-			throw $e;
+			return new UserInfoResource($user);
+		} else {
+			return response()->json([
+				'message' => 'No se permite la edición de este usuario',
+			], 500);
 		}
-		return new UserInfoResource($user);
 	}
 	public function putUserActive(Request $request, $user_id)
 	{
-		$user = User::findOrFail($user_id);
-		$user->active = !$user->active;
-		$user->save();
-		return new UserInfoResource($user);
+		if (intval($user_id) !== 1) {
+			$user = User::findOrFail($user_id);
+			$user->active = !$user->active;
+			$user->save();
+			return new UserInfoResource($user);
+		} else {
+			return response()->json([
+				'message' => 'No se permite la edición de este usuario',
+			], 500);
+		}
 	}
 	public function deleteUser(Request $request, $user_id)
 	{
-		$user = User::findOrFail($user_id);
-		$user->delete();
-		return response()->json([]);
+		if (intval($user_id) !== 1) {
+			$user = User::findOrFail($user_id);
+			$user->delete();
+			return response()->json([]);
+		} else {
+			return response()->json([
+				'message' => 'No se permite la eliminación de este usuario',
+			], 500);
+		}
 	}
 }

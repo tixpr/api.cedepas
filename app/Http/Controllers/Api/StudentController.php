@@ -157,7 +157,7 @@ class StudentController extends Controller
 		foreach ($matriculas as $matricula) {
 			array_push($ids, $matricula->course_group_id);
 		}
-		$courses = $group->courses()->select('course_group.id as id', 'courses.name')
+		$courses = $group->courses()->select('course_group.id as id', 'courses.name', 'course_group.user_id as user_id')
 			->whereNotIn('course_group.id', $ids)->get();
 		return CourseGroupRegisterResource::collection($courses);
 	}
