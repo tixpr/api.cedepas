@@ -129,6 +129,7 @@ class UsersController extends Controller
 				'phone' => $request->phone,
 			]);
 			$this->editUserRoles($user, $request->boolean('teacher'), $request->boolean('student'));
+			$user->sendEmailVerificationNotification();
 			DB::commit();
 		} catch (PDOException $e) {
 			DB::rollBack();
