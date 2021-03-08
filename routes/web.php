@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Auth;
 |
 */
 
-Auth::routes(['login' => false, 'logout' => false, 'verify' => true]);
+Auth::routes(['login' => false, 'verify' => true]);
 Route::get('/', function () {
 	return view('welcome');
 });
@@ -23,4 +23,4 @@ Route::get('login', function () {
 	return redirect()->away('https://webapp.seminarioandinosanpablo.org.pe/#/login');
 })->name('login');
 Route::post('login', [LoginController::class, 'login']);
-Route::post('logout', [LoginController::class, 'logout']);
+//Route::post('logout', [LoginController::class, 'logout']);
